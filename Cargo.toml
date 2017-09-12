@@ -1,0 +1,9 @@
+[package]
+name = "hub-sdk"
+version = "0.1.0"
+authors = ["James Munns <james@geeny.io>"]
+license = "MPL-2.0"
+readme = "README.md"
+description = "Geeny Linux Hub SDK"
+documentation = "https://docs.rs/hub_sdk"
+repository = "https://github.com/geeny/linux-hub-sdk"
