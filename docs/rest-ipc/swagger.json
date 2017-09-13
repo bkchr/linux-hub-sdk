@@ -1,0 +1,409 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "description": "API endpoints for Geeny Hub SDK with REST IPC",
+    "version": "0.2.1",
+    "title": "Geeny Hub SDK REST IPC"
+  },
+  "schemes": [
+    "http"
+  ],
+  "basePath": "/api/v1",
+  "paths": {
+    "/login": {
+      "post": {
+        "tags": [
+          "Authorization"
+        ],
+        "summary": "Login the Hub into the Geeny API using username and password",
+        "parameters": [
+          {
+            "name": "credentials",
+            "description": "Credential Data",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/AuthLoginRequest"
+            },
+            "in": "body"
+          }
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "Logged In",
+            "schema": {
+              "$ref": "#/definitions/GenericSuccess"
+            }
+          },
+          "400": {
+            "description": "Error",
+            "schema": {
+              "$ref": "#/definitions/SDKError"
+            }
+          }
+        }
+      }
+    },
+    "/logout": {
+      "post": {
+        "tags": [
+          "Authorization"
+        ],
+        "summary": "Logout the Hub from the Geeny API",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "Logged Out",
+            "schema": {
+              "$ref": "#/definitions/GenericSuccess"
+            }
+          },
+          "400": {
+            "description": "Error",
+            "schema": {
+              "$ref": "#/definitions/SDKError"
+            }
+          }
+        }
+      }
+    },
+    "/token/check": {
+      "get": {
+        "tags": [
+          "Authorization"
+        ],
+        "summary": "Query the current status of the Hub SDK Token",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "Token Response",
+            "schema": {
+              "$ref": "#/definitions/TokenResponse"
+            }
+          },
+          "400": {
+            "description": "Error",
+            "schema": {
+              "$ref": "#/definitions/SDKError"
+            }
+          }
+        }
+      }
+    },
+    "/things": {
+      "post": {
+        "tags": [
+          "Thing Management"
+        ],
+        "summary": "Register a new thing with the Geeny Hub SDK",
+        "parameters": [
+          {
+            "name": "Thing Request",
+            "description": "New Thing Data",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/ThingRequest"
+            },
+            "in": "body"
+          }
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "Thing Created",
+            "schema": {
+              "$ref": "#/definitions/GenericSuccess"
+            }
+          },
+          "400": {
+            "description": "Error",
+            "schema": {
+              "$ref": "#/definitions/SDKError"
+            }
+          }
+        }
+      }
+    },
+    "/things/{serial}": {
+      "delete": {
+        "tags": [
+          "Thing Management"
+        ],
+        "summary": "Delete a thing from the Geeny Cloud",
+        "description": "Note: Thing must not be paired with the Hub before deletion. Unpair Thing first before deletion.",
+        "parameters": [
+          {
+            "name": "serial",
+            "description": "Serial Number of Thing",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "Thing Deactivated",
+            "schema": {
+              "$ref": "#/definitions/GenericSuccess"
+            }
+          },
+          "400": {
+            "description": "Error",
+            "schema": {
+              "$ref": "#/definitions/SDKError"
+            }
+          }
+        }
+      }
+    },
+    "/things/unpair/{serial}": {
+      "delete": {
+        "tags": [
+          "Thing Management"
+        ],
+        "summary": "Unpair a thing from the Geeny Hub SDK",
+        "description": "The Thing will be unpaired from the Geeny Hub SDK, but the thing will not be deleted from the Geeny Cloud",
+        "parameters": [
+          {
+            "name": "serial",
+            "description": "Serial Number of Thing",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "Thing Unpaired",
+            "schema": {
+              "$ref": "#/definitions/GenericSuccess"
+            }
+          },
+          "400": {
+            "description": "Error",
+            "schema": {
+              "$ref": "#/definitions/SDKError"
+            }
+          }
+        }
+      }
+    },
+    "/messages/{serial}": {
+      "post": {
+        "tags": [
+          "Message Handling"
+        ],
+        "summary": "Send messages to the Geeny Cloud on behalf of a Thing",
+        "parameters": [
+          {
+            "name": "serial",
+            "description": "Serial Number of Thing",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "messages",
+            "description": "Messages to be sent for Thing",
+            "required": true,
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/IncomingMessages"
+            }
+          }
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "Messages queued for sending",
+            "schema": {
+              "$ref": "#/definitions/GenericSuccess"
+            }
+          },
+          "400": {
+            "description": "Error",
+            "schema": {
+              "$ref": "#/definitions/SDKError"
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Message Handling"
+        ],
+        "summary": "Recieve messages from the Geeny Cloud on behalf of a Thing",
+        "parameters": [
+          {
+            "name": "serial",
+            "description": "Serial Number of Thing",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "Messages from Cloud",
+            "schema": {
+              "$ref": "#/definitions/IncomingMessages"
+            }
+          },
+          "400": {
+            "description": "Error",
+            "schema": {
+              "$ref": "#/definitions/SDKError"
+            }
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "SDKError": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string"
+        },
+        "message": {
+          "type": "string"
+        }
+      },
+      "example": {
+        "status": "failure",
+        "message": "Failed to xxx, caused by: failure to yyy"
+      }
+    },
+    "AuthLoginRequest": {
+      "type": "object",
+      "properties": {
+        "email": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
+        }
+      },
+      "example": {
+        "email": "demo@email.com",
+        "password": "5ecretP@ssw0rd"
+      }
+    },
+    "GenericSuccess": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string"
+        }
+      },
+      "example": {
+        "status": "success"
+      }
+    },
+    "TokenResponse": {
+      "type": "object",
+      "properties": {
+        "email": {
+          "type": "string"
+        },
+        "valid_token": {
+          "type": "boolean"
+        }
+      },
+      "example": {
+        "email": "demo@email.com",
+        "valid_token": false
+      }
+    },
+    "ThingRequest": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "serial_number": {
+          "type": "string"
+        },
+        "thing_type": {
+          "type": "string",
+          "format": "uuid"
+        }
+      },
+      "example": {
+        "name": "MyCloudThing",
+        "serial_number": "ABC123456",
+        "thing_type": "2CB7F29A-527B-11E7-B114-B2F933D5FE66"
+      }
+    },
+    "IncomingMessages": {
+      "type": "object",
+      "properties": {
+        "msgs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/PartialThingMessage"
+          }
+        }
+      }
+    },
+    "PartialThingMessage": {
+      "type": "object",
+      "properties": {
+        "topic": {
+          "type": "string"
+        },
+        "msg": {
+          "type": "string"
+        }
+      },
+      "example": {
+        "topic": "demo/send/path",
+        "msg": "Thing says Hello!"
+      }
+    }
+  }
+}
