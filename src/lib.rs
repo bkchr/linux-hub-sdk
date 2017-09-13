@@ -61,7 +61,7 @@
 //!
 //! #### Documentation
 //!
-//! Full library documentation may be found on [docs.rs](https://docs.rs/hub_sdk), or may be generated
+//! Full library documentation may be found on [docs.rs](https://docs.rs/hub-sdk), or may be generated
 //! from this repository using `cargo doc --open`.
 //!
 //! ### Usage - As a standalone service
@@ -92,7 +92,7 @@
 //!
 //! ```toml
 //! [dependencies]
-//! hub_sdk = "0.3"
+//! hub-sdk = "0.3"
 //! ```
 //!
 //! In your main project file (likely `lib.rs` or `main.rs`), add the following line:
