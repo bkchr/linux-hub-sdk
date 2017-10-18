@@ -18,7 +18,7 @@ use rumqtt::{self, MqttClient};
 
 use errors::*;
 use geeny_api::ThingsApi;
-use geeny_api::models::{Resource, Thing, ThingRequest};
+use geeny_api::models::{Resource, ResourceMethod, Thing, ThingRequest};
 use things_db::PartialThingMessage;
 
 /// `ThingSyncState` is a three part state machine. The three states are:
@@ -70,7 +70,6 @@ impl ThingSyncState {
         // First check if there is an existing device matching this serial number
         let existing = api.get_thing_by_serial(token, &thing_request.serial_number);
 
-
         match existing {
             Ok(Some(_new_thing)) => {
                 // TODO: restore after we can retrieve certs for existing devices
@@ -104,7 +103,11 @@ impl ThingSyncState {
 
     /// We have created the device in the Geeny cloud, we now need to get some
     /// associated metadata before we can establish an MQTT connection
-    pub fn gather_thing_metadata(api: &ThingsApi, token: &str, geeny_thing: &Thing) -> Option<Self> {
+    pub fn gather_thing_metadata(
+        api: &ThingsApi,
+        token: &str,
+        geeny_thing: &Thing,
+    ) -> Option<Self> {
         // get all resources for this thing type
         let meta_req = api.get_thing_type_resources(token, &geeny_thing.thing_type);
 
@@ -168,8 +171,7 @@ pub struct MetaThing {
     pub cert_file_name: Option<PathBuf>,
     pub key_file_name: Option<PathBuf>,
 
-    #[serde(skip)]
-    pub mqtt_handle: Option<MqttClient>,
+    #[serde(skip)] pub mqtt_handle: Option<MqttClient>,
 }
 
 impl MetaThing {
@@ -198,8 +200,7 @@ impl MetaThing {
             (&ca_file_name, &certs.ca),
             (&cert_file_name, &certs.cert),
             (&key_file_name, &certs.key),
-        ]
-        {
+        ] {
             // Scope to ensure file closed and written
             {
                 let mut file = File::create(fname).chain_err(|| "Failed to create file!")?;
@@ -256,17 +257,22 @@ impl MetaThing {
             }
         });
 
-        let mut client = rumqtt::MqttClient::start(opts, Some(msg_handler))
-            .chain_err(|| "Failed to connect!")?;
+        let mut client =
+            rumqtt::MqttClient::start(opts, Some(msg_handler)).chain_err(|| "Failed to connect!")?;
 
-        client
-            .subscribe(
-                self.resources
+        let subscribes: Vec<(&str, rumqtt::QoS)> = self.resources
                     .iter()
-                    .map(|r| (r.uri.as_str(), rumqtt::QoS::Level0)) // TODO variable QoS?
-                    .collect(),
-            )
-            .chain_err(|| "Failed to subscribe")?;
+                    .filter_map(|r| match r.method {
+                        ResourceMethod::Sub => Some((r.uri.as_str(), rumqtt::QoS::Level0)), // TODO variable QoS?
+                        ResourceMethod::Pub => None,
+                    })
+                    .collect();
+
+        if subscribes.len() > 0 {
+            client
+                .subscribe(subscribes)
+                .chain_err(|| "Failed to subscribe")?;
+        }
 
         self.mqtt_handle = Some(client);
 
@@ -278,18 +284,19 @@ impl MetaThing {
         // Messages from the hub need to be "pushed" to the cloud.
         if let Some(ref mut m_handle) = self.mqtt_handle {
             for msg in msgs_from_hub {
-
                 log::info!("Sending: {:?}", msg);
 
                 // TODO: https://jira.geeny.io/browse/DI-194
                 use std::ascii::AsciiExt;
                 let ascii_msg = msg.msg.chars().filter(|c| c.is_ascii()).collect::<String>();
 
+                let tx_bytes = ascii_msg.into_bytes();
+
                 m_handle
                     .publish(
                         &msg.topic,
                         rumqtt::QoS::Level0, // TODO configurable?
-                        ascii_msg.into_bytes(),
+                        tx_bytes,
                     )
                     .chain_err(|| "Failed to publish")?;
             }
