@@ -251,9 +251,7 @@ impl HubSDK {
             .access(|auth| auth.token.clone())?
             .ok_or_else(|| Error::from("No token, cannot delete. Please log in"))?;
 
-        let serno = serial.to_lowercase(); // TODO: THIS SHOULDN'T BE HERE, should be handled by develco exclusively
-
-        let thing = match self.config.api.get_thing_by_serial(&token, &serno)? {
+        let thing = match self.config.api.get_thing_by_serial(&token, &serial)? {
             Some(t) => t,
             None => {
                 // If there is no matching device, still report okay

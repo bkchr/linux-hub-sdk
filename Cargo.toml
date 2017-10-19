@@ -1,6 +1,6 @@
 [package]
 name = "hub-sdk"
-version = "0.3.5"
+version = "0.3.6"
 authors = ["James Munns <james@geeny.io>"]
 license = "MPL-2.0"
 readme = "README.md"
