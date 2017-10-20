@@ -5,13 +5,10 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-// Error chain triggers an annoying lint
-#![allow(unused_doc_comment)]
-
-// Use the code generation features from `Rocket`. This requires a nightly compiler
-#![feature(plugin, custom_derive)]
-#![plugin(rocket_codegen)]
 #![feature(use_extern_macros)]
+
+#![cfg_attr(feature = "rest-service", feature(plugin, custom_derive))]
+#![cfg_attr(feature = "rest-service", plugin(rocket_codegen))]
 
 //! # Geeny Hub SDK
 //!
@@ -92,7 +89,7 @@
 //!
 //! ```toml
 //! [dependencies]
-//! hub-sdk = "0.3"
+//! hub-sdk = "0.4"
 //! ```
 //!
 //! In your main project file (likely `lib.rs` or `main.rs`), add the following line:
@@ -108,7 +105,7 @@
 //! cp ./geeny_hub_service.mvdb.json.example ./geeny_hub_service.mvdb.json
 //!
 //! # Run the service, serving a REST IPC on localhost:9000
-//! cargo run --release --bin hub-service
+//! cargo run --release --bin hub-service --features="rest-service"
 //! ```
 //!
 //! ## Testing
@@ -128,13 +125,19 @@ extern crate log;
 
 #[macro_use]
 extern crate error_chain;
-#[macro_use]
-extern crate rocket_contrib;
+
 #[macro_use]
 extern crate serde_derive;
-extern crate rocket;
 extern crate rumqtt;
 extern crate uuid;
+
+#[cfg(feature = "rest-service")]
+#[macro_use]
+extern crate rocket_contrib;
+
+#[cfg(feature = "rest-service")]
+extern crate rocket;
+
 
 // TODO DI-245
 //   * Move to sqlite3 or diesel

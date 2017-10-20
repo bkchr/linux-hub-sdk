@@ -45,7 +45,7 @@ pub fn prep_rocket(config: RocketConfig, sdk: interface::HubSDK) -> rocket::Rock
         .manage(sdk)
 }
 
-#[derive(Debug, Serialize, Deserialize, Clone, Hash)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct ServiceConfig {
     pub sdk: HubSDKConfig,
 

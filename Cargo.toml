@@ -1,6 +1,6 @@
 [package]
 name = "hub-sdk"
-version = "0.3.6"
+version = "0.4.0"
 authors = ["James Munns <james@geeny.io>"]
 license = "MPL-2.0"
 readme = "README.md"
@@ -8,19 +8,23 @@ description = "Geeny Linux Hub SDK"
 documentation = "https://docs.rs/hub-sdk"
 repository = "https://github.com/geeny/linux-hub-sdk"
 
+[[bin]]
+name = "hub-service"
+required-features = ["rest-service"]
+
 [dependencies]
 serde = "1.0"
 serde_derive = "1.0"
 error-chain = "0.10"
 
-rocket = "0.3.0"
-rocket_codegen = "0.3.0"
-rocket_contrib = "0.3.0"
+rocket = { version = "0.3.0", optional = true }
+rocket_codegen = { version = "0.3.0", optional = true }
+rocket_contrib = { version = "0.3.0", optional = true }
 
 log = "0.3"
 env_logger = "0.4"
 mvdb = "0.2"
-geeny-api = "0.2"
+geeny-api = "0.3"
 
 [dependencies.uuid]
 version = "0.5"
@@ -31,4 +35,10 @@ version = "0.10"
 path = "vendor/rumqtt"
 
 [features]
+default = []
+
 system-alloc = []
+rest-service = ["rocket", "rocket_codegen", "rocket_contrib"]
+
+[package.metadata.docs.rs]
+all-features = true

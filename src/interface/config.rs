@@ -2,7 +2,7 @@ use geeny_api::{ThingsApi, ConnectApi};
 use std::path::PathBuf;
 
 /// Configuration structure for a `HubSDK` instance
-#[derive(Debug, Serialize, Deserialize, Clone, Hash)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct HubSDKConfig {
     /// Connection object for the main Things API, e.g., `https://labs.geeny.io`
     pub api: ThingsApi,

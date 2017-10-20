@@ -15,6 +15,7 @@
 #![feature(global_allocator)]
 #![feature(allocator_api)]
 
+
 // This section is necessary after rustc 1.20.x due to the new way
 // allocator selection is handled. Either `jemalloc` may be used, or the system
 // allocator (`malloc`) provided by glibc
