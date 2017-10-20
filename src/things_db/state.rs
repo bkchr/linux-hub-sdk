@@ -220,7 +220,7 @@ impl MetaThing {
         let broker = format!("{}:{}", mqtt_host, mqtt_port);
 
         let opts = rumqtt::MqttOptions::new()
-            .set_client_id(&self.thing.id.hyphenated().to_string())
+            .set_client_id(self.thing.id.hyphenated().to_string())
             .set_ca(ca_file_name)
             .set_client_cert(cert_file_name, key_file_name)
             .set_should_verify_ca(true)

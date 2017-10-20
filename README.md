@@ -56,7 +56,7 @@ from this repository using `cargo doc --open`.
 cp ./geeny_hub_service.mvdb.json.example ./geeny_hub_service.mvdb.json
 
 # Run the service, serving a REST IPC on localhost:9000
-cargo run --release --bin hub-service
+cargo run --release --bin hub-service --features="rest-service"
 ```
 
 #### Documentation
@@ -77,7 +77,7 @@ In your `Cargo.toml`, add the following lines:
 
 ```toml
 [dependencies]
-hub-sdk = "0.3"
+hub-sdk = "0.4"
 ```
 
 In your main project file (likely `lib.rs` or `main.rs`), add the following line:
