@@ -5,3 +5,6 @@ Cargo.lock
 
 # Ignore actual config files (only track the example)
 geeny_hub_service.mvdb.json
+
+# Misc CI Outputs
+doc_results/

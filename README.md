@@ -46,7 +46,7 @@ fn main() {
 
 #### Documentation
 
-Full library documentation may be found on [docs.rs](https://docs.rs/hub-sdk), or may be generated
+Full library documentation may be found on [Geeny's Documentation Site](https://docs.geeny.io/sdk/hub-sdk/hub_sdk), or may be generated
 from this repository using `cargo doc --open`.
 
 ### Usage - As a standalone service
@@ -93,7 +93,7 @@ extern crate hub_sdk;
 cp ./geeny_hub_service.mvdb.json.example ./geeny_hub_service.mvdb.json
 
 # Run the service, serving a REST IPC on localhost:9000
-cargo run --release --bin hub-service
+cargo run --release --bin hub-service --features="rest-service"
 ```
 
 ## Testing

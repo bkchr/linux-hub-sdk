@@ -1,0 +1,428 @@
+{
+	"info": {
+		"name": "hub-sdk",
+		"_postman_id": "d7e289fa-b90f-f53f-91a8-996228229849",
+		"description": "",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Authentication",
+			"description": "",
+			"item": [
+				{
+					"name": "login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"",
+									"tests[\"Response time is less than 400ms\"] = responseTime <= 400;",
+									"",
+									"tests[\"Login with email address was successful\"] = responseBody.has(\"success\");",
+									"",
+									"postman.setNextRequest(\"check-token\");",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"email\":\"marco+hub-sdk@geeny.io\",\n\t\"password\": \"1a2b3c4d5e!\"\n}"
+						},
+						"url": {
+							"raw": "{{hub-sdk}}/{{login}}",
+							"host": [
+								"{{hub-sdk}}"
+							],
+							"path": [
+								"{{login}}"
+							]
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "check-token",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"",
+									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"",
+									"tests[\"Response time is less than 400ms\"] = responseTime <= 400;",
+									"",
+									"tests[\"email field is not empty\"] = jsonData.email.length > 1;",
+									"",
+									"tests[\"token is valid\"] = jsonData.valid_token === true;",
+									"",
+									"",
+									"postman.setNextRequest(\"create a thing\");",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {},
+						"url": {
+							"raw": "{{hub-sdk}}/{{check-token}}",
+							"host": [
+								"{{hub-sdk}}"
+							],
+							"path": [
+								"{{check-token}}"
+							]
+						},
+						"description": "get request to check the token"
+					},
+					"response": []
+				},
+				{
+					"name": "logout",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"",
+									"tests[\"Response time is less than 400ms\"] = responseTime <= 400;",
+									"",
+									"tests[\"Login with email address was successful\"] = responseBody.has(\"success\");",
+									"",
+									"postman.setNextRequest(null);"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {},
+						"url": {
+							"raw": "{{hub-sdk}}/{{logout}}",
+							"host": [
+								"{{hub-sdk}}"
+							],
+							"path": [
+								"{{logout}}"
+							]
+						},
+						"description": ""
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Thing Management",
+			"description": "",
+			"item": [
+				{
+					"name": "delete a thing",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"",
+									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"",
+									"tests[\"Response time is less than 400ms\"] = responseTime <= 400;",
+									"",
+									"tests[\"deleting a thing was successful\"] = jsonData.status === \"success\";",
+									"",
+									"postman.setNextRequest(\"logout\");",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{hub-sdk}}/{{thing}}/{{thing-serial-number}}",
+							"host": [
+								"{{hub-sdk}}"
+							],
+							"path": [
+								"{{thing}}",
+								"{{thing-serial-number}}"
+							]
+						},
+						"description": "delete a thing from the hub"
+					},
+					"response": []
+				},
+				{
+					"name": "unpair a thing",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"",
+									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"",
+									"tests[\"Response time is less than 400ms\"] = responseTime <= 400;",
+									"",
+									"tests[\"unpairing a thing was successful\"] = jsonData.status === \"success\";",
+									"",
+									"postman.setNextRequest(\"delete a thing\");",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{hub-sdk}}/{{unpair-thing}}/{{thing-serial-number}}",
+							"host": [
+								"{{hub-sdk}}"
+							],
+							"path": [
+								"{{unpair-thing}}",
+								"{{thing-serial-number}}"
+							]
+						},
+						"description": "request to unpair a thing"
+					},
+					"response": []
+				},
+				{
+					"name": "create a thing",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"",
+									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"",
+									"tests[\"Response time is less than 400ms\"] = responseTime <= 400;",
+									"",
+									"tests[\"register a thing was successful\"] = jsonData.status === \"success\";",
+									"",
+									"postman.setNextRequest(\"send message\");",
+									""
+								]
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.globals.set(\"thing-serial-number\", \"testDevice123\");",
+									"pm.globals.set(\"thing-name\", \"My Test Device\");",
+									"pm.globals.set(\"thing-type\", \"87864286-f79b-4b9e-9a79-2b86083ee0df\");"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json+"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"{{thing-name}}\",\n  \"serial_number\": \"{{thing-serial-number}}\",\n  \"thing_type\": \"{{thing-type}}\"\n}"
+						},
+						"url": {
+							"raw": "{{hub-sdk}}/{{thing}}",
+							"host": [
+								"{{hub-sdk}}"
+							],
+							"path": [
+								"{{thing}}"
+							]
+						},
+						"description": "register a thing to the hub"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Messages",
+			"description": "",
+			"item": [
+				{
+					"name": "received message",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"",
+									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"",
+									"tests[\"Response time is less than 400ms\"] = responseTime <= 400;",
+									"",
+									"tests[\"message exists but is empty\"] = jsonData.msg !== null;",
+									"",
+									"postman.setNextRequest(\"unpair a thing\");",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {},
+						"url": {
+							"raw": "{{hub-sdk}}/{{messages}}/{{thing-serial-number}}",
+							"host": [
+								"{{hub-sdk}}"
+							],
+							"path": [
+								"{{messages}}",
+								"{{thing-serial-number}}"
+							]
+						},
+						"description": "Recieve messages from the Geeny Cloud on behalf of a Thing"
+					},
+					"response": []
+				},
+				{
+					"name": "send message",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"",
+									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"",
+									"tests[\"Response time is less than 400ms\"] = responseTime <= 400;",
+									"",
+									"tests[\"sending a message was successful\"] = jsonData.status === \"success\";",
+									"",
+									"postman.setNextRequest(\"received message\");",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"msgs\": [\n    {\n      \"topic\": \"test/api-endpoint\",\n      \"msg\": \"Thing says Hello!\"\n    }\n  ]\n}"
+						},
+						"url": {
+							"raw": "{{hub-sdk}}/{{messages}}/{{thing-serial-number}}",
+							"host": [
+								"{{hub-sdk}}"
+							],
+							"path": [
+								"{{messages}}",
+								"{{thing-serial-number}}"
+							]
+						},
+						"description": "Send messages to the Geeny Cloud on behalf of a Thing"
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}

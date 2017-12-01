@@ -360,7 +360,7 @@ fn make_dirs(cfg: &HubSDKConfig) -> Result<()> {
 
     for path in paths {
         fs::create_dir_all(path)
-            .chain_err(|| "failed to create certificate directory")?;
+            .chain_err(|| format!("failed to create certificate directory {:?}", path))?;
         fs::set_permissions(path, folder_perms.clone())
             .chain_err(|| "Couldn't set permissions")?;
     }
