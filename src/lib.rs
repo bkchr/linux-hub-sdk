@@ -7,8 +7,8 @@
 
 #![feature(use_extern_macros)]
 
-#![cfg_attr(feature = "rest-service", feature(plugin, custom_derive))]
-#![cfg_attr(feature = "rest-service", plugin(rocket_codegen))]
+#![cfg_attr(feature = "rest-rocket-service", feature(plugin, custom_derive))]
+#![cfg_attr(feature = "rest-rocket-service", plugin(rocket_codegen))]
 
 //! # Geeny Hub SDK
 //!
@@ -131,12 +131,22 @@ extern crate serde_derive;
 extern crate rumqtt;
 extern crate uuid;
 
-#[cfg(feature = "rest-service")]
+#[cfg(feature = "rest-rocket-service")]
 #[macro_use]
 extern crate rocket_contrib;
 
-#[cfg(feature = "rest-service")]
+#[cfg(feature = "rest-rocket-service")]
 extern crate rocket;
+
+#[cfg(feature = "rest-hyper-service")]
+extern crate hyper;
+
+#[cfg(feature = "rest-hyper-service")]
+#[macro_use]
+extern crate serde_json;
+
+#[cfg(feature = "rest-hyper-service")]
+extern crate futures;
 
 
 // TODO DI-245

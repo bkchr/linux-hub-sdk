@@ -15,7 +15,7 @@
         "mqtt_port": 8883
     },
     "ipc": {
-        "address": "localhost",
+        "address": "127.0.0.1",
         "port": 9000,
         "workers": 8
     }

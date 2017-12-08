@@ -33,24 +33,15 @@
 //! Additionally, `Error` implements the `Responder` trait from Rocket, and will produce
 //! a JSON return value with error code 400 if returned from a route handler in Rocket.
 
-#[cfg(feature = "rest-service")]
-use std::io::Cursor;
-#[cfg(feature = "rest-service")]
-use std::fmt::Write;
-#[cfg(feature = "rest-service")]
-use log;
-#[cfg(feature = "rest-service")]
-use rocket::request::Request;
-#[cfg(feature = "rest-service")]
-use rocket::response::{Responder, Response};
-#[cfg(feature = "rest-service")]
-use rocket::http::{ContentType, Status};
-
 use mvdb::errors as merr;
 use geeny_api::errors as gerr;
 
 // TODO DI-234 - Proper enumeration of errors
 error_chain!{
+    foreign_links {
+        Json(::serde_json::Error) #[cfg(feature = "rest-hyper-service")];
+        Hyper(::hyper::Error) #[cfg(feature = "rest-hyper-service")];
+    }
     links {
         Mvdb(merr::Error, merr::ErrorKind);
         GeenyApi(gerr::Error, gerr::ErrorKind);
@@ -58,12 +49,21 @@ error_chain!{
 }
 
 // Implement `Responder` for `error_chain`'s `Error` type
-#[cfg(feature = "rest-service")]
-impl<'r> Responder<'r> for Error {
+#[cfg(feature = "rest-rocket-service")]
+impl<'r> ::rocket::response::Responder<'r> for Error {
     /// Implement `respond_to` in order to allow route handlers to generate a JSON response
     /// in the case of error. Please see [this blog post](https://jamesmunns.com/update/2017/07/22/rocket-plus-error-chain.html)
     /// for more information
-    fn respond_to(self, _: &Request) -> ::std::result::Result<Response<'r>, Status> {
+    fn respond_to(
+        self,
+        _: &::rocket::Request,
+    ) -> ::std::result::Result<::rocket::response::Response<'r>, ::rocket::http::Status> {
+        use log;
+        use std::io::Cursor;
+        use std::fmt::Write;
+        use rocket::http::{ContentType, Status};
+        use rocket::response::Response;
+
         // Render the whole error chain to a single string
         let mut rslt = String::new();
         write!(rslt, "Error: {}", self).unwrap();

@@ -6,8 +6,8 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 // Use the code generation features from `Rocket`. This requires a nightly compiler
-#![feature(plugin, custom_derive)]
-#![plugin(rocket_codegen)]
+#![cfg_attr(feature = "rest-rocket-service", feature(plugin, custom_derive))]
+#![cfg_attr(feature = "rest-rocket-service", plugin(rocket_codegen))]
 // This feature is necessary for `error` macro aliasing between rocket and log
 #![feature(use_extern_macros)]
 // These features allow us to choose the allocator
@@ -44,9 +44,8 @@ extern crate log;
 extern crate env_logger;
 
 use std::path::PathBuf;
-use std::thread;
 
-use hub_sdk::services::rest_ipc::{prep_rocket, ServiceConfig};
+use hub_sdk::services::rest_ipc::{launch_rest, ServiceConfig};
 use hub_sdk::HubSDK;
 
 fn main() {
@@ -64,11 +63,5 @@ fn main() {
 
     let hub_sdk = HubSDK::new(sdk_cfg);
 
-    let x = prep_rocket(ipc_cfg, hub_sdk.clone());
-
-    let ipc_api = thread::spawn(|| { x.launch(); });
-
-    ipc_api
-        .join()
-        .expect("Failed to gracefully join the IPC thread");
+    launch_rest(ipc_cfg, hub_sdk);
 }

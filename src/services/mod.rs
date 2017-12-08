@@ -7,7 +7,7 @@
 
 //! Hub SDK Services - Service Applications using the Geeny Hub SDK
 
-#[cfg(feature = "rest-service")]
+#[cfg(any(feature = "rest-rocket-service", feature = "rest-hyper-service"))]
 pub mod rest_ipc;
 
 pub use things_db::PartialThingMessage;

@@ -5,16 +5,10 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-//! Configuration structure for [Rocket](https://rocket.rs)
-//!
-//! Necessary because Rocket's current configuration structures are not
-//! serializable/deserializable, which is inconvenient for making a single
-//! configuration file for this service
-
-use rocket;
+//! Configuration structure for the rest api
 
 #[derive(Debug, Serialize, Deserialize, Hash, PartialEq, Clone)]
-pub struct RocketConfig {
+pub struct RestConfig {
     /// Address to serve the IPC interface on. It is recommended to use `localhost`
     /// to only expose this service on the local machine.
     pub address: String,
@@ -26,17 +20,7 @@ pub struct RocketConfig {
     pub workers: u16,
 }
 
-impl RocketConfig {
-    pub fn render(&self) -> rocket::Config {
-        rocket::Config::build(rocket::config::Environment::Development) // TODO
-            .address(self.address.clone())
-            .port(self.port)
-            .workers(self.workers)
-            .expect("Invalid IPC Configuration!")
-    }
-}
-
-impl Default for RocketConfig {
+impl Default for RestConfig {
     fn default() -> Self {
         Self {
             address: "127.0.0.1".into(),
