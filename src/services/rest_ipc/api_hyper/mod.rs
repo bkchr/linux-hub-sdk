@@ -14,7 +14,6 @@ use interface;
 use errors::*;
 use super::rest_config::RestConfig;
 
-use std::sync::{Arc, Mutex};
 use std::net::IpAddr;
 
 use hyper::server::{Http, Request, Response, Service};
@@ -30,7 +29,7 @@ use futures::IntoFuture;
 use log;
 
 struct Api {
-    sdk: Arc<Mutex<interface::HubSDK>>,
+    sdk: interface::HubSDK,
 }
 
 impl Api {
@@ -38,9 +37,9 @@ impl Api {
         let path = req.path();
 
         if path == "/token/check" {
-            auth::token_check(&self.sdk.lock().unwrap())
+            auth::token_check(&self.sdk)
         } else if path.starts_with("/messages/") {
-            things::get_message(path[10..].to_string(), &self.sdk.lock().unwrap())
+            things::get_message(path[10..].to_string(), &self.sdk)
         } else {
             bail!("unknown get request")
         }
@@ -51,15 +50,15 @@ impl Api {
 
         if path == "/login" {
             let body = self.body_to_string(req.body())?;
-            auth::login(body, &self.sdk.lock().unwrap())
+            auth::login(body, &self.sdk)
         } else if path == "/logout" {
-            auth::logout(&self.sdk.lock().unwrap())
+            auth::logout(&self.sdk)
         } else if path == "/things" {
             let body = self.body_to_string(req.body())?;
-            things::post_thing(body, &self.sdk.lock().unwrap())
+            things::post_thing(body, &self.sdk)
         } else if path.starts_with("/messages/") {
             let body = self.body_to_string(req.body())?;
-            things::post_message(path[10..].to_string(), body, &self.sdk.lock().unwrap())
+            things::post_message(path[10..].to_string(), body, &self.sdk)
         } else {
             bail!("unknown post request")
         }
@@ -71,9 +70,9 @@ impl Api {
         let unpair = "/things/unpair/";
         let things = "/things/";
         if path.starts_with(unpair) {
-            things::unpair_thing(path[unpair.len()..].to_string(), &self.sdk.lock().unwrap())
+            things::unpair_thing(path[unpair.len()..].to_string(), &self.sdk)
         } else if path.starts_with(things) {
-            things::delete_thing(path[things.len()..].to_string(), &self.sdk.lock().unwrap())
+            things::delete_thing(path[things.len()..].to_string(), &self.sdk)
         } else {
             bail!("unknown delete request")
         }
@@ -133,8 +132,6 @@ pub fn launch_rest(config: RestConfig, sdk: interface::HubSDK) {
     let port = config.port;
 
     log::debug!("Starting Hyper; config: {:?}", config);
-
-    let sdk = Arc::new(Mutex::new(sdk));
 
     let server = Http::new()
         .bind(&(addr, port).into(), move || Ok(Api { sdk: sdk.clone() }))

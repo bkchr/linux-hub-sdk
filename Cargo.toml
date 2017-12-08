@@ -35,7 +35,7 @@ version = "0.5"
 features = ["serde", "v4"]
 
 [features]
-default = ["rest-hyper-service"]
+default = []
 
 system-alloc = []
 rest-rocket-service = ["rocket", "rocket_codegen", "rocket_contrib"]
