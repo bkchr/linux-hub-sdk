@@ -52,11 +52,14 @@ from this repository using `cargo doc --open`.
 ### Usage - As a standalone service
 
 ```bash
+# (Optional) Install the recommended version of the Rust toolchain
+rustup install nightly-2017-10-14
+
 # Create a valid config file for this service
 cp ./geeny_hub_service.mvdb.json.example ./geeny_hub_service.mvdb.json
 
 # Run the service, serving a REST IPC on localhost:9000
-cargo run --release --bin hub-service --features="rest-service"
+cargo +nightly-2017-10-14 run --release --bin hub-service --features="rest-service"
 ```
 
 #### Documentation
@@ -67,7 +70,7 @@ for more information.
 
 ## Requirements
 
-Currently, the Geeny Hub SDK requires a nightly build of Rust.
+Currently, the Geeny Hub SDK requires a nightly build of Rust. For the current release, we recommend using `nightly-2017-10-14`.
 
 ## Installation & Configuration
 
@@ -88,13 +91,7 @@ extern crate hub_sdk;
 
 ### As a service
 
-```bash
-# Create a valid config file for this service
-cp ./geeny_hub_service.mvdb.json.example ./geeny_hub_service.mvdb.json
-
-# Run the service, serving a REST IPC on localhost:9000
-cargo run --release --bin hub-service --features="rest-service"
-```
+See the `Usage - As a standalone service` section above.
 
 ## Testing
 
